@@ -1,7 +1,9 @@
-# Nest Boilerplate
+# Nest Messenger
 
-This is my custom boilerplate repository which uses following modules
+### Clone Messenger!!
+
+Spec
+
 - Prisma
-  - For database
 - Passport
-  - For authentication
+- SocketIO
