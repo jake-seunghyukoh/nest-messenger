@@ -1,33 +1,34 @@
+import { Logger, UseFilters, UsePipes } from '@nestjs/common';
 import {
-  UseFilters,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
-import { LocalAuthGuard } from '../auth/local-auth.guard';
-import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
   BaseWsExceptionFilter,
-  ConnectedSocket,
-  MessageBody,
-  SubscribeMessage,
   WebSocketGateway,
-  WsResponse,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket } from 'dgram';
 
-@UseGuards(LocalAuthGuard)
-@UsePipes(new ValidationPipe())
+import { Socket } from 'socket.io';
+import { Server } from 'ws';
+
 @UseFilters(new BaseWsExceptionFilter())
 @WebSocketGateway()
-export class MessagesGateway {
-  @SubscribeMessage('message')
-  handleMessage(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: string,
-  ): WsResponse<unknown> {
-    console.log(client, data);
+export class MessagesGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  @WebSocketServer() server: Server;
 
-    const event = 'message';
-    return { event, data };
+  private logger: Logger = new Logger('MessageGateway');
+
+  public afterInit(): void {
+    this.logger.log('Init');
+  }
+
+  public handleConnection(client: Socket): void {
+    this.logger.log(`Connected: ${client.id}`);
+  }
+
+  public handleDisconnect(client: Socket): void {
+    this.logger.log(`Disconnected: ${client.id}`);
   }
 }
