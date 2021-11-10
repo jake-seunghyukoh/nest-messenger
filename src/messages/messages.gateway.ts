@@ -1,4 +1,4 @@
-import { Logger, UseFilters, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
